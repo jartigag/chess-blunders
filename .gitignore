@@ -1,3 +1,4 @@
+*.csv
 *.pgn.bz2
 
 # Byte-compiled / optimized / DLL files
