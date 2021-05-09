@@ -9,42 +9,57 @@ from pathlib import Path
 import chess.pgn
 import pandas as pd
 import os
+import bz2
 #from src.features.build_features import process
 
 def preprocess_pgn(pgn_file):
-    logger = logging.getLogger()
-    logger.warning(f"Preprocessing {pgn_file}")
+    """Extract blunders (identified by Move-FEN), each one with player's Elo, game's time control and seconds spent in that move"""
 
     data = pd.DataFrame(columns=['Move', 'FEN', 'Elo', 'TimeControl', 'SecondsInThisMove'])
     data.set_index(['Move', 'FEN'], inplace=True)
 
-    numlines = int(os.popen(f"wc -l {pgn_file}").read().split(  )[0])
+    def convert_bytes(num):
+        for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+            if num < 1024.0:
+                return "%3.1f %s" % (num, x)
+            num /= 1024.0
+
+    size = convert_bytes(pgn_file.stat().st_size)
+    if str(pgn_file).endswith("bz2"):
+        #numlines = int(os.popen(f"bzcat {pgn_file} | wc -l").read().split(  )[0])
+        numlines = float('Inf')
+    else:
+        numlines = int(os.popen(f"wc -l {pgn_file}").read().split(  )[0])
     readlines = 0
 
+    logger = logging.getLogger()
+    logger.warning(f"Preprocessing {pgn_file} ({numlines} lines, {size})")
+
     def print_progress():
-        readlines += len(current_match.headers) + 3 # headers + movetext + 2 blank lines
-        if float(f"{readlines/numlines*100:.2f}")%5==0: # 5%, 10%, 15%..
+        if float(f"{readlines/numlines*100:.2f}")%5==0 \
+            and not (float(f"{readlines/numlines*100:.2f}")==0 and numlines == float('Inf')):
+            # 5%, 10%, 15%..
             logger.info(f"{readlines/numlines*100:.2f} % completed ({readlines} lines read, {len(data)} blunders extracted)")
 
-    pgn = open(pgn_file)
+    pgn = bz2.open(pgn_file, 'rt') if str(pgn_file).endswith("bz2") else open(pgn_file)
     current_match = chess.pgn.read_game(pgn)
 
     while current_match:
         current_node = current_match
         if not current_node.variations: # eg: [Termination "Abandoned"], [Termination "Time forfeit"]
-            print_progress()
+            readlines += len(current_match.headers) + 3 # headers + movetext + 2 blank lines
             current_match = chess.pgn.read_game(pgn)
             continue
 
         if '%eval' not in current_node.variations[0].comment:
             # There is no eval for this game, skip to next
-            print_progress()
+            readlines += len(current_match.headers) + 3 # headers + movetext + 2 blank lines
             current_match = chess.pgn.read_game(pgn)
             continue
 
         # Game has an eval, loop through moves
         while not current_node.is_end():
-            next_node = current_node.variations[0] # next movement
+            next_node = current_node.variations[0] # next move
             if 4 in next_node.nags:
                 # Check the nag set for each node for 4: the indicator for blunder
                 match_identif = "({} vs. {}, {})".format(current_match.headers['White'],
@@ -66,10 +81,11 @@ def preprocess_pgn(pgn_file):
 
             current_node = next_node
 
+        readlines += len(current_match.headers) + 3 # headers + movetext + 2 blank lines
         current_match = chess.pgn.read_game(pgn)
         print_progress()
 
-    print_progress()
+    logger.info(f"{readlines/numlines*100:.2f} % completed ({readlines} lines read, {len(data)} blunders extracted)")
     return data
 
 
@@ -83,14 +99,18 @@ def main(input_path, output_path):
     logger = logging.getLogger()
     logger.warning('Making final data set from raw data..')
 
-    normalized_input_path = f"{Path(input_path).resolve()}/" if Path(input_path).is_dir() else f"{Path(input_path).resolve()}"
+    if Path(input_path).is_dir():
+        normalized_input_path = f"{Path(input_path).resolve()}/"
+        files = [f for f in Path(input_path).iterdir() if '.pgn' in f.name and f.suffix in ['.pgn','.bz2']]
+    else:
+        normalized_input_path = f"{Path(input_path).resolve()}"
+        files = [Path(input_path) if Path(input_path).suffix in ['.pgn','.pgn.bz2'] else '']
     logger.warning(f"PGNs in input path {normalized_input_path} will be preprocessed")
-    #TODO: make possible to iterate over input_path='a_file.pgn'
-    for f in Path(input_path).glob('*.pgn'):
+    for f in files:
         data = preprocess_pgn(f)
         preprocess_output = f"{Path(output_path)/f.stem}.blunders.csv" # f.stem is f.name without suffix
         data.to_csv(preprocess_output)
-        logger.warning(f"Preprocess output in {preprocess_output}")
+        logger.warning(f"{len(data)} blunders extracted. Output in {preprocess_output}")
 
 
     #./src/features/build_features.py
