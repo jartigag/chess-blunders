@@ -8,7 +8,7 @@ from pathlib import Path
 
 import chess.pgn
 import pandas as pd
-import os
+import os, subprocess
 import bz2
 #from src.features.build_features import process
 
@@ -26,8 +26,13 @@ def preprocess_pgn(pgn_file):
 
     size = convert_bytes(pgn_file.stat().st_size)
     if str(pgn_file).endswith("bz2"):
-        #numlines = int(os.popen(f"bzcat {pgn_file} | wc -l").read().split(  )[0])
-        numlines = float('Inf')
+        try:
+            ps = subprocess.Popen(('bzcat', pgn_file), stdout=subprocess.PIPE)
+            output = subprocess.check_output(('wc','-l'), stdin=ps.stdout, timeout=5)
+            ps.wait()
+            numlines = int(output)
+        except subprocess.TimeoutExpired:
+            numlines = float('Inf')
     else:
         numlines = int(os.popen(f"wc -l {pgn_file}").read().split(  )[0])
     readlines = 0
