@@ -40,11 +40,15 @@ def preprocess_pgn(pgn_file):
     logger = logging.getLogger()
     logger.warning(f"Preprocessing {pgn_file} ({numlines} lines, {size})")
 
-    def print_progress():
-        if float(f"{readlines/numlines*100:.2f}")%5==0 \
-            and not (float(f"{readlines/numlines*100:.2f}")==0 and numlines == float('Inf')):
-            # 5%, 10%, 15%..
-            logger.info(f"{readlines/numlines*100:.2f} % completed ({readlines} lines read, {len(data)} blunders extracted)")
+    actual_progress_bucket = 0
+    progress_buckets = [x*10 for x in range(0,10)]
+
+    def print_progress(a):
+        if a<len(progress_buckets):
+            if readlines/numlines*100 >= progress_buckets[a]:
+                logger.info(f"{readlines/numlines*100:.2f} % completed ({readlines} lines read, {len(data)} blunders extracted)")
+                a+=1
+        return a
 
     pgn = bz2.open(pgn_file, 'rt') if str(pgn_file).endswith("bz2") else open(pgn_file)
     current_match = chess.pgn.read_game(pgn)
@@ -88,9 +92,9 @@ def preprocess_pgn(pgn_file):
 
         readlines += len(current_match.headers) + 3 # headers + movetext + 2 blank lines
         current_match = chess.pgn.read_game(pgn)
-        print_progress()
+        actual_progress_bucket = print_progress(actual_progress_bucket)
 
-    logger.info(f"{readlines/numlines*100:.2f} % completed ({readlines} lines read, {len(data)} blunders extracted)")
+    print_progress(-1)
     return data
 
 
@@ -109,13 +113,16 @@ def main(input_path, output_path):
         files = [f for f in Path(input_path).iterdir() if '.pgn' in f.name and f.suffix in ['.pgn','.bz2']]
     else:
         normalized_input_path = f"{Path(input_path).resolve()}"
-        files = [Path(input_path) if Path(input_path).suffix in ['.pgn','.pgn.bz2'] else '']
+        files = [Path(input_path) if Path(input_path).suffix in ['.pgn','.pgn.bz2'] else input_path]
     logger.warning(f"PGNs in input path {normalized_input_path} will be preprocessed")
     for f in files:
-        data = preprocess_pgn(f)
-        preprocess_output = f"{Path(output_path)/f.stem}.blunders.csv" # f.stem is f.name without suffix
-        data.to_csv(preprocess_output)
-        logger.warning(f"{len(data)} blunders extracted. Output in {preprocess_output}")
+        if isinstance(f,Path):
+            data = preprocess_pgn(f)
+            preprocess_output = f"{Path(output_path)/f.stem}.blunders.csv" # f.stem is f.name without suffix
+            data.to_csv(preprocess_output)
+            logger.warning(f"{len(data)} blunders extracted. Output in {preprocess_output}")
+        else:
+            logger.warning(f"{f} suffix is invalid (must be .pgn or .pgn.bz2). Skipping to next file..")
 
 
     #./src/features/build_features.py
