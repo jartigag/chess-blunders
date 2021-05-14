@@ -41,7 +41,7 @@ def preprocess_pgn(pgn_file):
     logger.warning(f"Preprocessing {pgn_file} ({numlines} lines, {size})")
 
     actual_progress_bucket = 0
-    progress_buckets = [x*10 for x in range(0,10)]
+    progress_buckets = [x for x in range(0,100)]
 
     def print_progress(a):
         if a<len(progress_buckets):
