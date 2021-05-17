@@ -3,7 +3,7 @@ chess blunders
 
 analyzing the most common chess blunders
 
-[![asciicast](https://asciinema.org/a/NbiR86kmuHfCxREuWBJVTFIsn.svg)](https://asciinema.org/a/NbiR86kmuHfCxREuWBJVTFIsn)
+[![asciicast](https://asciinema.org/a/414643.svg)](https://asciinema.org/a/414643)
 
 Project Organization
 ------------
