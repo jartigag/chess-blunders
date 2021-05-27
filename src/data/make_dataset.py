@@ -15,7 +15,7 @@ import bz2
 def preprocess_pgn(pgn_file):
     """Extract blunders (identified by Move-FEN), each one with player's Elo, game's time control and seconds spent in that move"""
 
-    data = pd.DataFrame(columns=['Move', 'FEN', 'Elo', 'TimeControl', 'SecondsInThisMove'])
+    data = pd.DataFrame(columns=['Move', 'FEN', 'Turn', 'Elo', 'TimeControl', 'ElapsedSeconds'])
     data.set_index(['Move', 'FEN'], inplace=True)
 
     def convert_bytes(num):
@@ -78,6 +78,7 @@ def preprocess_pgn(pgn_file):
                 logger.debug(f"blunder in {match_identif}: {next_node.move}")
                 fen = current_node.board().fen()
                 move = current_node.board().san(next_node.move)
+                turn = current_node.board().fullmove_number
                 if current_node.board().turn==chess.WHITE:
                     elo = current_match.headers['WhiteElo']
                 else:
@@ -85,7 +86,7 @@ def preprocess_pgn(pgn_file):
                 timecontrol = current_match.headers['TimeControl']
                 secs = current_node.clock()
                 data = data.append(pd.Series(
-                        {'Elo': elo, 'TimeControl': timecontrol, 'SecondsInThisMove': secs},
+                    {'Elo': elo, 'TimeControl': timecontrol, 'ElapsedSeconds': secs, 'Turn': turn},
                         name=(move, fen)
                     ))
 
