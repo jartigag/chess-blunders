@@ -5,14 +5,23 @@ import pandas as pd
 import numpy as np
 
 
-df_data = pd.read_csv('../data/interim/first_500k_lichess_db_standard_rated_2021-04.pgn.eval.blunders.csv')
+import glob
+df_data = pd.concat(map(pd.read_csv,
+                        glob.glob('../data/interim/*lichess_db_standard_rated_2021-04.eval.blunders.csv')))
+print(len(df_data),"rows")
 df_data.head()
 
 
-grouped_by_elo = df_data.groupby( pd.cut(df_data['Elo'], np.arange(1400, 3000, 200)) )
+# # Explore by Elo
+
+grouped_by_elo = df_data.groupby( pd.cut(df_data['Elo'], np.arange(600, 3000, 200)) )
 grouped_by_elo.size()
 
 
-vc = grouped_by_elo.get_group(pd.Interval(1400, 1600, closed='right')).value_counts(['Move', 'FEN'])
-vc[vc>1]
+for low_thr in range(600,2600,200):
+    vc = grouped_by_elo.get_group(pd.Interval(low_thr, low_thr+200, closed='right')).value_counts(['Move', 'FEN'])
+    #with pd.option_context('display.max_rows', 8):
+    print(f"Elo: ({low_thr},{low_thr+200}]")
+    print(vc[vc>1].head(10))
+    print("---")
 
