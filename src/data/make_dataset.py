@@ -69,6 +69,8 @@ def preprocess_pgn(pgn_file):
         # Game has an eval, loop through moves
         while not current_node.is_end():
             next_node = current_node.variations[0] # next move
+            turn = current_node.board().fullmove_number
+            if turn>15: break
             if 4 in next_node.nags: #  Annotation Glyphs or NAGs are used to annotate chess games when using a computer
                 #                      NAG_BLUNDER = 4 """A blunder. Can also be indicated by ``??`` in PGN notation."""
                 # Check the nag set for each node for 4: the indicator for blunder
@@ -78,7 +80,6 @@ def preprocess_pgn(pgn_file):
                 logger.debug(f"blunder in {match_identif}: {next_node.move}")
                 fen = current_node.board().fen()
                 move = current_node.board().san(next_node.move)
-                turn = current_node.board().fullmove_number
                 if current_node.board().turn==chess.WHITE:
                     elo = current_match.headers['WhiteElo']
                 else:
