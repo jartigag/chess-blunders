@@ -3,12 +3,23 @@
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 import glob
-df_data = pd.concat(map(pd.read_csv,
-                        glob.glob('../data/interim/*lichess_db_standard_rated_2021-04.eval.blunders.csv')))
-print(len(df_data),"rows")
+
+df_data202104 = pd.concat(map(pd.read_csv,
+                        glob.glob('../data/interim/*lichess_db_standard_rated_2021-04*eval.blunders.csv')))
+print("2021-04:",len(df_data202104),"rows")
+df_data202104['Date'] = pd.to_datetime('2021-04')
+
+df_data202002 = pd.concat(map(pd.read_csv,
+                        glob.glob('../data/interim/*lichess_db_standard_rated_2020-02*eval.blunders.csv')))
+print("2020-02:",len(df_data202002),"rows")
+df_data202002['Date'] = pd.to_datetime('2020-02')
+
+df_data = pd.concat([df_data202104, df_data202002])
+
 df_data.head()
 
 
@@ -24,4 +35,30 @@ for low_thr in range(600,2600,200):
     print(f"Elo: ({low_thr},{low_thr+200}]")
     print(vc[vc>1].head(10))
     print("---")
+
+
+# # Explore by Date
+
+grouped_by_elo = df_data.groupby( [pd.cut(df_data['Elo'], np.arange(600, 3000, 200)),'Date'] )
+grouped_by_elo.size()
+
+
+for low_thr in range(600,2600,200):
+    #for date in grouped_by_elo.Date.unique():
+    #for date in set([tup[1] for tup in list(grouped_by_elo.groups.keys())]):
+    for date in [pd.Timestamp('2020-02-01 00:00:00'),pd.Timestamp('2021-04-01 00:00:00')]:
+        vc = grouped_by_elo.get_group((pd.Interval(low_thr, low_thr+200, closed='right'),date)).value_counts(['Move', 'FEN'])
+        print(f"Date: {date}. Elo: ({low_thr},{low_thr+200}]")
+        print(vc[vc>1].head(5))
+    print("---")
+
+
+# # Explore by plots
+
+vc = df_data.Move.value_counts()
+vc[vc>7000].plot(kind='bar')
+
+
+s = df_data.groupby(['Date','Move']).size().sort_values(ascending=False).to_frame('size')
+s[s>3000].reset_index().set_index('Date').dropna() #.plot(y='size')
 
