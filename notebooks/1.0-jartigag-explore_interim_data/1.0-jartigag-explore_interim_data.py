@@ -33,7 +33,7 @@ for low_thr in range(600,2600,200):
     vc = grouped_by_elo.get_group(pd.Interval(low_thr, low_thr+200, closed='right')).value_counts(['Move', 'FEN'])
     #with pd.option_context('display.max_rows', 8):
     print(f"Elo: ({low_thr},{low_thr+200}]")
-    print(vc[vc>1].head(10))
+    print(vc[vc>1].head(5))
     print("---")
 
 
@@ -59,6 +59,17 @@ vc = df_data.Move.value_counts()
 vc[vc>7000].plot(kind='bar')
 
 
-s = df_data.groupby(['Date','Move']).size().sort_values(ascending=False).to_frame('size')
-s[s>3000].reset_index().set_index('Date').dropna() #.plot(y='size')
+s = df_data.groupby(['Date','Move']).size().sort_values(ascending=False).to_frame('size').reset_index().set_index('Date')
+
+for move, group in s[s['size']>3000].groupby('Move'):
+    x = [t.to_pydatetime() for t in group.index]
+    y = group['size'].to_list()
+    plt.plot(x,y, label=move)
+
+#plt.legend(loc='right', bbox_to_anchor=(1.5,0.5))
+plt.ylim()
+plt.show()
+
+
+s.query("size>3000 & Date==datetime(2021,4,1)").sort_values(by='size', ascending=False)
 
