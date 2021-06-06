@@ -14,7 +14,6 @@ for m in range(1,13):
     df_list.append(df)
 
 df_data = pd.concat([d for d in df_list])
-
 df_data.head()
 
 
@@ -38,10 +37,8 @@ grouped_by_elo = df_data.groupby( [pd.cut(df_data['Elo'], np.arange(600, 3000, 2
 grouped_by_elo.size()
 
 
-for low_thr in range(600,2600,200):
-    #for date in grouped_by_elo.Date.unique():
-    #for date in set([tup[1] for tup in list(grouped_by_elo.groups.keys())]):
-    for date in [pd.Timestamp('2020-02-01 00:00:00'),pd.Timestamp('2021-04-01 00:00:00')]:
+for low_thr in [1600]:#range(600,2600,200):
+    for date in pd.date_range(start='2020-01', periods=12, freq=pd.offsets.MonthBegin()):
         vc = grouped_by_elo.get_group((pd.Interval(low_thr, low_thr+200, closed='right'),date)).value_counts(['Move', 'FEN'])
         print(f"Date: {date}. Elo: ({low_thr},{low_thr+200}]")
         print(vc[vc>1].head(5))
@@ -49,6 +46,12 @@ for low_thr in range(600,2600,200):
 
 
 # # Explore by plots
+# 
+# `0-0` is the most frequent blunder, but it doesn't appear in any top 5 grouped by [Move, Fen] for each Elo interval.
+# That's because `0-0` is possible for many positions (different FEN notations), so many castlings has been evaluated as blunders but they're not the same move.
+# ```
+# #TODO: fix this
+# ```
 
 vc = df_data.Move.value_counts()
 vc[vc>50000].plot(kind='bar')
@@ -75,6 +78,5 @@ for row in sorted_data:
     plt.plot(x,y, label=move)
 
 plt.legend(loc='right', bbox_to_anchor=(1.5,0.5))
-plt.ylim()
 plt.show()
 
