@@ -6,19 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-import glob
+df_list = []
+for m in range(1,13):
+    df = pd.read_csv(f'../data/interim/lichess_db_standard_rated_2020-{m:02d}.eval.blunders.csv')
+    print(f"2020-{m:02d}:",len(df),"rows")
+    df['Date'] = pd.to_datetime(f'2020-{m:02d}')
+    df_list.append(df)
 
-df_data202104 = pd.concat(map(pd.read_csv,
-                        glob.glob('../data/interim/*lichess_db_standard_rated_2021-04*eval.blunders.csv')))
-print("2021-04:",len(df_data202104),"rows")
-df_data202104['Date'] = pd.to_datetime('2021-04')
-
-df_data202002 = pd.concat(map(pd.read_csv,
-                        glob.glob('../data/interim/*lichess_db_standard_rated_2020-02*eval.blunders.csv')))
-print("2020-02:",len(df_data202002),"rows")
-df_data202002['Date'] = pd.to_datetime('2020-02')
-
-df_data = pd.concat([df_data202104, df_data202002])
+df_data = pd.concat([d for d in df_list])
 
 df_data.head()
 
@@ -56,20 +51,30 @@ for low_thr in range(600,2600,200):
 # # Explore by plots
 
 vc = df_data.Move.value_counts()
-vc[vc>7000].plot(kind='bar')
+vc[vc>50000].plot(kind='bar')
 
 
-s = df_data.groupby(['Date','Move']).size().sort_values(ascending=False).to_frame('size').reset_index().set_index('Date')
+s = df_data.groupby(['Date','Move']).size().sort_values(ascending=False).to_frame('size')
+s = s.reset_index().set_index('Date').sort_index()
 
-for move, group in s[s['size']>3000].groupby('Move'):
-    x = [t.to_pydatetime() for t in group.index]
-    y = group['size'].to_list()
+s = s.drop(index=pd.Timestamp('2020-09-01 00:00:00')) #TODO: check processing on this month
+
+data_dict = {}
+for move, group in s[s['size']>5000].groupby('Move'):
+    data_dict[move] = {'date': [], 'size': []}
+    data_dict[move]['date'] = [t.to_pydatetime() for t in group.index]
+    data_dict[move]['size'] = group['size'].to_list()
+    #plt.plot(x,y, label=move)
+
+sorted_data = sorted(data_dict.items(), key = lambda kv:data_dict[kv[0]]['size'][-1], reverse=True)
+
+for row in sorted_data:
+    move = row[0]
+    x = row[1]['date']
+    y = row[1]['size']
     plt.plot(x,y, label=move)
 
-#plt.legend(loc='right', bbox_to_anchor=(1.5,0.5))
+plt.legend(loc='right', bbox_to_anchor=(1.5,0.5))
 plt.ylim()
 plt.show()
-
-
-s.query("size>3000 & Date==datetime(2021,4,1)").sort_values(by='size', ascending=False)
 
