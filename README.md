@@ -3,7 +3,11 @@ chess blunders
 
 analyzing the most common chess blunders
 
-[![asciicast](https://asciinema.org/a/414643.svg)](https://asciinema.org/a/414643)
+## 2020
+
+![](reports/figures/blunders_by_total_size_2020.png)
+
+![](reports/figures/blunders_evolution_2020.png)
 
 Project Organization
 ------------
