@@ -46,21 +46,17 @@ for low_thr in [1600]:#range(600,2600,200):
 
 
 # # Explore by plots
-# 
-# `0-0` is the most frequent blunder, but it doesn't appear in any top 5 grouped by [Move, Fen] for each Elo interval.
-# That's because `0-0` is possible for many positions (different FEN notations), so many castlings has been evaluated as blunders but they're not the same move.
-# ```
-# #TODO: fix this
-# ```
 
-vc = df_data.Move.value_counts()
-vc[vc>50000].plot(kind='bar')
+vc = df_data.value_counts(['Move', 'FEN'])
+vc_gt400 = vc[vc>400]
 
 
+vc_gt400.plot(kind='bar') #TODO: change xaxis labels to move only
+
+
+#TODO: include FEN
 s = df_data.groupby(['Date','Move']).size().sort_values(ascending=False).to_frame('size')
 s = s.reset_index().set_index('Date').sort_index()
-
-s = s.drop(index=pd.Timestamp('2020-09-01 00:00:00')) #TODO: check processing on this month
 
 data_dict = {}
 for move, group in s[s['size']>5000].groupby('Move'):
