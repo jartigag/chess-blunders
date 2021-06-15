@@ -51,15 +51,15 @@ vc = df_data.value_counts(['Move', 'FEN'])
 vc_gt400 = vc[vc>400]
 
 
-vc_gt400.plot(kind='bar') #TODO: change xaxis labels to move only
+vc_gt400.reset_index().plot(kind='bar',x='Move',legend=None) #.get_figure(); x.savefig('png', dpi=200)
 
 
-#TODO: include FEN
-s = df_data.groupby(['Date','Move']).size().sort_values(ascending=False).to_frame('size')
+#s = df_data.groupby(['Date','Move','FEN']).size().sort_values(ascending=False).to_frame('size')
+s = df_data.value_counts(['Date', 'Move', 'FEN']).sort_values(ascending=False).to_frame('size')
 s = s.reset_index().set_index('Date').sort_index()
 
 data_dict = {}
-for move, group in s[s['size']>5000].groupby('Move'):
+for move, group in s[s['size']>400].groupby('Move'):
     data_dict[move] = {'date': [], 'size': []}
     data_dict[move]['date'] = [t.to_pydatetime() for t in group.index]
     data_dict[move]['size'] = group['size'].to_list()
@@ -67,6 +67,7 @@ for move, group in s[s['size']>5000].groupby('Move'):
 
 sorted_data = sorted(data_dict.items(), key = lambda kv:data_dict[kv[0]]['size'][-1], reverse=True)
 
+'''
 for row in sorted_data:
     move = row[0]
     x = row[1]['date']
@@ -75,4 +76,5 @@ for row in sorted_data:
 
 plt.legend(loc='right', bbox_to_anchor=(1.5,0.5))
 plt.show()
+'''
 
