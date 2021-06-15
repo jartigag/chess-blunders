@@ -7,6 +7,11 @@ analyzing the most common chess blunders
 
 ![](reports/figures/blunders_by_total_size_2020.png)
 
+| ![](reports/figures/blunders_2020_in_board/1-g6.png) | ![](reports/figures/blunders_2020_in_board/2-Ng5.png) | ![](reports/figures/blunders_2020_in_board/3-Bc4.png) |
+|------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
+| ![](reports/figures/blunders_2020_in_board/4-Nd4.png) | ![](reports/figures/blunders_2020_in_board/5-fxe5.png) | ![](reports/figures/blunders_2020_in_board/6-fxe5.png) |
+| ![](reports/figures/blunders_2020_in_board/7-Nh3.png) | ![](reports/figures/blunders_2020_in_board/8-Nxe5.png) | ![](reports/figures/blunders_2020_in_board/9-Bf4.png) |
+
 ![](reports/figures/blunders_evolution_2020.png)
 
 Project Organization
