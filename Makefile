@@ -1,5 +1,3 @@
-.PHONY: clean data lint requirements sync_data_to_s3 sync_data_from_s3
-
 #################################################################################
 # GLOBALS                                                                       #
 #################################################################################
@@ -7,7 +5,7 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
-PROJECT_NAME = tfm-clustering
+PROJECT_NAME = chess-blunders
 PYTHON_INTERPRETER = python3
 
 ifeq (,$(shell which conda))
@@ -20,17 +18,22 @@ endif
 # COMMANDS                                                                      #
 #################################################################################
 
-## Make Complete Dataset
-data: data_interim data_processed
+## Install Python Dependencies
+requirements:
+	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
+	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
+
+## Make Complete Dataset: process data from raw to processed
+data: #data_interim data_processed
 	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
 
-## Make Dataset: preprocess data
-data_interim: requirements
+## Make Dataset: preprocess data from raw to interim
+data_interim: #requirements
 	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/interim
 
-## Make Dataset: processed data
-data_processed: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/interim data/processed
+## Make Dataset: process data from interim to processed
+data_processed: #requirements
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py --from_interim_files data/interim data/processed
 
 ## Delete all compiled Python files
 clean:
@@ -60,13 +63,9 @@ endif
 ## Set up python interpreter environment
 create_environment:
 ifeq (True,$(HAS_CONDA))
-		@echo ">>> Detected conda, creating conda environment."
-ifeq (3,$(findstring 3,$(PYTHON_INTERPRETER)))
+	@echo ">>> Detected conda, creating conda environment."
 	conda create --name $(PROJECT_NAME) python=3
-else
-	conda create --name $(PROJECT_NAME) python=2.7
-endif
-		@echo ">>> New conda env created. Activate with:\nsource activate $(PROJECT_NAME)"
+	@echo ">>> New conda env created. Activate with:\nsource activate $(PROJECT_NAME)"
 else
 	$(PYTHON_INTERPRETER) -m pip install virtualenv
 	@echo ">>> Installing virtualenv if not already installed.\nMake sure the following lines are in shell startup file\n"
