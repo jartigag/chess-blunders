@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-#usage: ./make_dataset.py ../../data/raw/ ../../data/interim/
+#usage: ./make_interim_data.py ../../data/raw/ ../../data/interim/
 
 import click
 import logging
@@ -10,7 +10,9 @@ import chess.pgn
 import pandas as pd
 import os, subprocess
 import bz2
-#from src.features.build_features import process
+
+from src.visualization.visualize_interim_data import print_boards
+
 
 def preprocess_pgn(pgn_file):
     """Extract blunders (identified by Move-FEN), each one with player's Elo, game's time control and seconds spent in that move"""
@@ -106,17 +108,10 @@ def preprocess_pgn(pgn_file):
     return data
 
 
-def aggregate_data(blunders_df):
-    """Get the final processed dataframes, aggregated by several variables of interest, to be visualized"""
-    vc = blunders_df.value_counts(['Move', 'FEN'])
-    return vc[vc>10] #TODO: reconsider this
-
-
 @click.command()
 @click.argument('input_path', type=click.Path(exists=True))
 @click.argument('output_path', type=click.Path(exists=True))
-@click.option('--from_interim_files', is_flag=True)
-def main(input_path, output_path, from_interim_files):
+def main(input_path, output_path):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
@@ -124,48 +119,26 @@ def main(input_path, output_path, from_interim_files):
 
     if Path(input_path).is_dir():
         normalized_input_path = f"{Path(input_path).resolve()}/"
-        if not from_interim_files:
-            files = [f for f in Path(input_path).iterdir() if '.pgn' in f.name and f.suffix in ['.pgn','.bz2']]
-        else:
-            files = [f for f in Path(input_path).iterdir() if f.suffix=='.csv']
+        files = [f for f in Path(input_path).iterdir() if '.pgn' in f.name and f.suffix in ['.pgn','.bz2']]
     else:
         normalized_input_path = f"{Path(input_path).resolve()}"
-        if not from_interim_files:
-            files = [Path(input_path) if Path(input_path).suffix in ['.pgn','.pgn.bz2'] else input_path]
-        else:
-            files = [f for f in Path(input_path).iterdir() if f.suffix=='.csv']
+        files = [Path(input_path)] if Path(input_path).suffix in ['.pgn','.pgn.bz2'] else None
 
-    if not from_interim_files:
-        logger.warning('Making interim data set from raw data..')
-        logger.warning(f"PGNs in input path {normalized_input_path} will be preprocessed")
-    else:
-        logger.warning('Making final data set from interim data..')
-        logger.warning(f"PGNs in input path {normalized_input_path} will be processed")
+    logger.warning('Making interim data set from raw data..')
+    logger.warning(f"PGNs in input path {normalized_input_path} will be preprocessed")
 
     for f in files:
-        if isinstance(f,Path):
+        preprocessed_data = preprocess_pgn(f)
+        preprocessed_output = f"{Path(output_path)/f.stem}.blunders.csv" # f.stem is f.name without suffix
+        preprocessed_data.to_csv(preprocessed_output)
+        logger.warning(f"{len(preprocessed_data)} blunders extracted. Output in {preprocessed_output}")
 
-            if not from_interim_files:
-                preprocessed_data = preprocess_pgn(f)
-                preprocessed_output = f"{Path(output_path)/f.stem}.blunders.csv" # f.stem is f.name without suffix
-                preprocessed_data.to_csv(preprocessed_output)
-                logger.warning(f"{len(preprocessed_data)} blunders extracted. Output in {preprocessed_output}")
-            else:
-                preprocessed_data = pd.read_csv(f)
-                processed_data = aggregate_data(preprocessed_data)
-                processed_output = f"{Path(output_path)/f.stem}.aggregated.csv"
-                processed_data.to_csv(processed_output)
-                logger.warning(f"Aggregated in {len(processed_data)} rows. Output in {processed_output}")
+    logger.warning('Interim data set done.')
 
-        else:
-            logger.warning(f"{f} suffix is invalid (must be .pgn or .pgn.bz2). Skipping to next file..")
-
-    #./src/visualization/visualize.py
-    #logger = logging.getLogger(".".join([make_visualizations.__module__, make_visualizations.__name__]))
-    logger.warning('making visualizations..')
+    #./src/visualization/visualize_interim_data.py
+    #logger = logging.getLogger(".".join([print_boards.__module__, print_boards.__name__]))
+    logger.warning('Making visualizations..')
     #TODO
-
-    logger.warning('final data set done.')
 
 
 if __name__ == '__main__':
@@ -216,27 +189,4 @@ if __name__ == '__main__':
 #      13 Nxe5  r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3     3
 #      13 Nd4   rnbqkbnr/ppp1pppp/8/8/4p3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3         3
 #      12 fxe5  rnbqkbnr/pppp2pp/5p2/4P3/4P3/8/PPP2PPP/RNBQKBNR b KQkq - 0 3         3
-#
-# 2-3M_lichess_db_standard_rated_2021-04.eval.blunders.csv
-#      30 Nd4   r1bqkbnr/pppp1ppp/2n5/3Pp3/4P3/8/PPP2PPP/RNBQKBNR b KQkq - 0 3        3
-#      24 Ng5   r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4   4
-#      24 g6    rnbqkbnr/pppp1ppp/8/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 1 2         2
-#      18 Bc4   rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2          2
-#      14 O-O   r1bqk2r/ppp2ppp/2p5/2b5/2B1P1n1/2N5/PPPP1PPP/R1BQK2R w KQkq - 4 7     7
-#      14 g4    r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 4 4  4
-#      13 Nxf7  r1b1kbnr/pppp1ppp/8/4N1q1/2BnP3/8/PPPP1PPP/RNBQK2R w KQkq - 1 5       5
-#      12 fxe5  rnbqkbnr/ppp2ppp/3p4/4p3/4PP2/8/PPPP2PP/RNBQKBNR w KQkq - 0 3         3
-#      12 fxe5  r1bqkbnr/pppp1ppp/2n5/4p3/4PP2/8/PPPP2PP/RNBQKBNR w KQkq - 1 3        3
-#      11 Nxe5  r1bqkbnr/pppp1ppp/2n5/4P3/4P3/8/PPPP2PP/RNBQKBNR b KQkq - 0 3         3
-#
-# 3-4M_lichess_db_standard_rated_2021-04.eval.blunders.csv
-#      28 g6     rnbqkbnr/pppp1ppp/8/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 1 2         2
-#      23 Nd4    r1bqkbnr/pppp1ppp/2n5/3Pp3/4P3/8/PPP2PPP/RNBQKBNR b KQkq - 0 3        3
-#      21 Ng5    r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4   4
-#      16 Bc4    rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2          2
-#      13 O-O    r1bqk2r/ppp2ppp/2p5/2b5/2B1P1n1/2N5/PPPP1PPP/R1BQK2R w KQkq - 4 7     7
-#      13 Nd4    rnbqkbnr/ppp1pppp/8/8/4p3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3          3
-#      11 g4     r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 4 4  4
-#      11 dxe7   rnbqk2r/ppp1nppp/3P4/2b5/8/5N2/PPP1PPPP/RNBQKB1R w KQkq - 1 5         5
-#      10 cxb5   rnbqkbnr/p3pppp/2p5/1P6/2pP4/4P3/1P3PPP/RNBQKBNR b KQkq - 0 5         5
-#      10 Bxf7+  r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4     4
+# ...
