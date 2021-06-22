@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-#usage: ./make_processed_data.py ../../data/interim/ ../../data/processed/
+#usage: python -m src.data.make_processed_data data/interim/ data/processed/
 
 import click
 import logging

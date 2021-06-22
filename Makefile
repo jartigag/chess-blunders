@@ -25,16 +25,16 @@ requirements:
 
 ## Make Complete Dataset: process data from raw to processed
 data:
-	$(PYTHON_INTERPRETER) src/data/make_interim_data.py data/raw data/interim
-	$(PYTHON_INTERPRETER) src/data/make_processed_data.py data/interim data/processed
+	$(PYTHON_INTERPRETER) -m src.data.make_interim_data data/raw data/interim
+	$(PYTHON_INTERPRETER) -m src.data.make_processed_data data/interim data/processed
 
 ## Make Dataset: preprocess data from raw to interim
 data_interim: #requirements
-	$(PYTHON_INTERPRETER) src/data/make_interim_data.py data/raw data/interim
+	$(PYTHON_INTERPRETER) -m src.data.make_interim_data data/raw data/interim
 
 ## Make Dataset: process data from interim to processed
 data_processed: #requirements
-	$(PYTHON_INTERPRETER) src/data/make_processed_data.py data/interim data/processed
+	$(PYTHON_INTERPRETER) -m src.data.make_processed_data data/interim data/processed
 
 ## Delete all compiled Python files
 clean:

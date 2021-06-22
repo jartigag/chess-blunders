@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-#usage: ./make_interim_data.py ../../data/raw/ ../../data/interim/
+#usage: python -m src.data.make_interim_data data/raw/ data/interim/
 
 import click
 import logging
