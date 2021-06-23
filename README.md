@@ -3,21 +3,23 @@ chess blunders
 
 analyzing the most common chess blunders
 
-## Download and filter only analysed games
+## - Download and filter only evaluated games
 
 [![asciicast](https://asciinema.org/a/421249.svg)](https://asciinema.org/a/421249)
 
-#### All data (only 2020-21 processed):
+#### All data (only the first 4M evaluated games for each month in 2020 and 2021 has been processed, but that's enough):
 
 [![](https://files.mastodon.social/media_attachments/files/106/364/592/647/904/077/original/409a5f27f47aa91b.png)](https://mastodon.social/@jartigag/106364603081282594)
 
-## Preprocess: get blunders
+## - Preprocess: get blunders (parallelizing 1M per core)
 
 [![](https://files.mastodon.social/media_attachments/files/106/325/214/686/169/487/original/c5d7d06fd10299a1.png)](https://mastodon.social/@jartigag/106325214993618150)
 
+#### Resulting interim data
+
 [![asciicast](https://asciinema.org/a/414643.svg)](https://asciinema.org/a/414643)
 
-## Most common blunders in 2020
+## - Aggregate and visualize most common blunders
 
 ![](reports/figures/blunders_by_total_size_2020.png)
 
