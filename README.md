@@ -3,7 +3,7 @@ chess blunders
 
 analyzing the most common chess blunders
 
-## How to recreate results
+## How to recreate the results
 
 Just:
 
