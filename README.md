@@ -3,6 +3,24 @@ chess blunders
 
 analyzing the most common chess blunders
 
+## How to recreate results
+
+Just:
+
+```
+make create_environment # and activate the environment:
+source venv/bin/activate
+make requirements
+./src/data/wget_data.sh # or download only the months you're interested in from https://database.lichess.org
+make data
+```
+
+The `make data` step takes a long time, so I'd recommend to run it on a server or maybe run it in two steps (`make data_interim` and then `make data_processed`).
+
+
+<details>
+<summary>Unfold this to see screenshots and screencasts about the process</summary>
+
 ## - Download and filter only evaluated games
 
 [![asciicast](https://asciinema.org/a/421249.svg)](https://asciinema.org/a/421249)
@@ -20,6 +38,10 @@ analyzing the most common chess blunders
 [![asciicast](https://asciinema.org/a/414643.svg)](https://asciinema.org/a/414643)
 
 ## - Aggregate and visualize most common blunders
+
+</details>
+
+## Visualizations
 
 ![](reports/figures/blunders_by_total_size_2020.png)
 
@@ -59,8 +81,14 @@ Derived from the [Cookiecutter Data Science project](https://github.com/jartigag
 ├── setup.py           <- Make this project pip installable with `pip install -e`
 └── src                <- Source code for use in this project.
     ├── data           <- Scripts to download or generate data
-    │   └── make_dataset.py
+    │   ├── make_interim_data.py
+    │   ├── make_processed_data.py
+    │   ├── pre_preprocess.sh
+    │   ├── split_first_4M.sh
+    │   └── wget_data.sh
     │
     └── visualization  <- Scripts to create exploratory and results oriented visualizations
-        └── visualize.py
+        ├── visualize_interim_data.py
+        └── visualize_processed_data.py
+
 ```

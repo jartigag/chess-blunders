@@ -9,7 +9,6 @@ from pathlib import Path
 import chess.pgn
 import pandas as pd
 import os, subprocess
-import bz2
 
 from src.visualization.visualize_interim_data import print_boards
 
@@ -27,16 +26,7 @@ def preprocess_pgn(pgn_file):
             num /= 1024.0
 
     size = convert_bytes(pgn_file.stat().st_size)
-    if str(pgn_file).endswith("bz2"):
-        try:
-            ps = subprocess.Popen(('bzcat', pgn_file), stdout=subprocess.PIPE)
-            output = subprocess.check_output(('wc','-l'), stdin=ps.stdout, timeout=5)
-            ps.wait()
-            numlines = int(output)
-        except subprocess.TimeoutExpired:
-            numlines = float('Inf')
-    else:
-        numlines = int(os.popen(f"wc -l {pgn_file}").read().split(  )[0])
+    numlines = int(os.popen(f"wc -l {pgn_file}").read().split(  )[0])
     readlines = 0
 
     logger = logging.getLogger()
@@ -52,7 +42,7 @@ def preprocess_pgn(pgn_file):
                 a+=1
         return a
 
-    pgn = bz2.open(pgn_file, 'rt') if str(pgn_file).endswith("bz2") else open(pgn_file)
+    pgn = open(pgn_file)
     current_match = chess.pgn.read_game(pgn)
 
     while current_match:
@@ -128,7 +118,19 @@ def main(input_path, output_path):
     logger.warning(f"PGNs in input path {normalized_input_path} will be preprocessed")
 
     for f in files:
-        preprocessed_data = preprocess_pgn(f)
+        logger.warning(f"Reading {f}..")
+        if not '.eval.' in f.name:
+            exit_code = os.system(f"./src/data/pre_preprocess.sh {f}") # this script supports .pgn and .bz2 input files.
+            if exit_code==0:
+                f_eval = f"{f.stem}.eval.pgn"                  # because this is the pre_preprocess.sh output.
+                logger.warning(f"Evaluated games extracted from {f} into {f_eval}..")
+            else:
+                logger.warning(f"[!] Evaluated games extraction from {f} failed.")
+                continue
+        else:
+            f_eval = f
+
+        preprocessed_data = preprocess_pgn(f_eval)
         preprocessed_output = f"{Path(output_path)/f.stem}.blunders.csv" # f.stem is f.name without suffix
         preprocessed_data.to_csv(preprocessed_output)
         logger.warning(f"{len(preprocessed_data)} blunders extracted. Output in {preprocessed_output}")
@@ -142,7 +144,7 @@ def main(input_path, output_path):
 
 
 if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(funcName)s - %(levelname)s - %(message)s'
+    log_fmt = '%(asctime)s - %(funcName)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=log_fmt)
 
     # not used in this stub but often useful for finding various files
