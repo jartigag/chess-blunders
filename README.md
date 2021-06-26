@@ -19,7 +19,7 @@ The `make data` step takes a long time, so I'd recommend to run it on a server o
 
 
 <details>
-<summary>Unfold this to see screenshots and screencasts about the process</summary>
+<summary>**Unfold this** to see screenshots and screencasts about the process</summary>
 
 ## - Download and filter only evaluated games
 
