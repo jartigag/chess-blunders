@@ -31,6 +31,12 @@ The `make data` step takes a long time, so I'd recommend to run it on a server o
 
 ## - Preprocess: get blunders (parallelizing 1M per core)
 
+At now, this step requires manual intervention:
+```
+./src/data/split_first_4M.sh
+# manually, fix the end and beginning of each file, so the pgn keeps a correct format
+```
+
 [![](https://files.mastodon.social/media_attachments/files/106/325/214/686/169/487/original/c5d7d06fd10299a1.png)](https://mastodon.social/@jartigag/106325214993618150)
 
 #### Resulting interim data
