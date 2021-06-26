@@ -39,6 +39,18 @@ The `make data` step takes a long time, so I'd recommend to run it on a server o
 
 ## - Aggregate and visualize most common blunders
 
+I should integrate this in `src/visualization/`, but until then:
+```
+cd notebooks
+jupyter-notebook
+```
+and open the notebook, or just:
+```
+cd notebooks
+python 1.0-jartigag-explore_interim_data/1.0-jartigag-explore_interim_data.py
+```
+but in that case matplotlib commands must be adapted in order to save the figures.
+
 </details>
 
 ## Visualizations
