@@ -72,7 +72,7 @@ On the board:
 | Nd4 ![](reports/figures/blunders_2020_in_board/4-Nd4.png) | fxe5 ![](reports/figures/blunders_2020_in_board/5-fxe5.png) | fxe5 ![](reports/figures/blunders_2020_in_board/6-fxe5.png) |
 | Nh3 ![](reports/figures/blunders_2020_in_board/7-Nh3.png) | Nxe5 ![](reports/figures/blunders_2020_in_board/8-Nxe5.png) | Bf4 ![](reports/figures/blunders_2020_in_board/9-Bf4.png) |
 
-Here there are the positions that were reached more often during 2020:
+Here there are the blunders more often played during 2020 (in the first 15 turns), *not taking into account the position*:
 
 ![](reports/figures/blunders_evolution_2020.png)
 
