@@ -11,7 +11,7 @@ Just:
 make create_environment # and activate the environment:
 source venv/bin/activate
 make requirements
-./src/data/wget_data.sh # or download only the months you're interested in from https://database.lichess.org
+./src/data/wget_data.sh # or download only the months you want rom https://database.lichess.org
 make data
 ```
 
@@ -61,12 +61,18 @@ but in that case matplotlib commands must be adapted in order to save the figure
 
 ## Visualizations
 
+In 2020 (9,661,229 blunders extracted out of the first 15 turns of 2,371,589 evaluated games), these were the most frequent moves that were [annotated](https://en.wikipedia.org/wiki/Numeric_Annotation_Glyphs) as [blunders](https://python-chess.readthedocs.io/en/latest/pgn.html?highlight=blunder#chess.pgn.NAG_BLUNDER):
+
 ![](reports/figures/blunders_by_total_size_2020.png)
 
-| ![](reports/figures/blunders_2020_in_board/1-g6.png) | ![](reports/figures/blunders_2020_in_board/2-Ng5.png) | ![](reports/figures/blunders_2020_in_board/3-Bc4.png) |
-|------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
-| ![](reports/figures/blunders_2020_in_board/4-Nd4.png) | ![](reports/figures/blunders_2020_in_board/5-fxe5.png) | ![](reports/figures/blunders_2020_in_board/6-fxe5.png) |
-| ![](reports/figures/blunders_2020_in_board/7-Nh3.png) | ![](reports/figures/blunders_2020_in_board/8-Nxe5.png) | ![](reports/figures/blunders_2020_in_board/9-Bf4.png) |
+On the board:
+
+| g6 ![](reports/figures/blunders_2020_in_board/1-g6.png) | Ng5 ![](reports/figures/blunders_2020_in_board/2-Ng5.png) | Bc4 ![](reports/figures/blunders_2020_in_board/3-Bc4.png) |
+|-------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
+| Nd4 ![](reports/figures/blunders_2020_in_board/4-Nd4.png) | fxe5 ![](reports/figures/blunders_2020_in_board/5-fxe5.png) | fxe5 ![](reports/figures/blunders_2020_in_board/6-fxe5.png) |
+| Nh3 ![](reports/figures/blunders_2020_in_board/7-Nh3.png) | Nxe5 ![](reports/figures/blunders_2020_in_board/8-Nxe5.png) | Bf4 ![](reports/figures/blunders_2020_in_board/9-Bf4.png) |
+
+Here there are the positions that were reached more often during 2020:
 
 ![](reports/figures/blunders_evolution_2020.png)
 
