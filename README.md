@@ -61,7 +61,7 @@ but in that case matplotlib commands must be adapted in order to save the figure
 
 ## Visualizations
 
-In 2020 (9,661,229 blunders extracted out of the first 15 turns of 2,371,589 evaluated games), these were the most frequent moves that were [annotated](https://en.wikipedia.org/wiki/Numeric_Annotation_Glyphs) as [blunders](https://python-chess.readthedocs.io/en/latest/pgn.html?highlight=blunder#chess.pgn.NAG_BLUNDER):
+In 2020 (9,661,219 blunders extracted out of the first 15 turns of 2,371,589 evaluated games), these were the most frequent moves that were [annotated](https://en.wikipedia.org/wiki/Numeric_Annotation_Glyphs) as [blunders](https://python-chess.readthedocs.io/en/latest/pgn.html?highlight=blunder#chess.pgn.NAG_BLUNDER):
 
 ![](reports/figures/blunders_by_total_size_2020.png)
 
