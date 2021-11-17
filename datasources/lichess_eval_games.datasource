@@ -1,0 +1,23 @@
+DESCRIPTION generated from scripts/lichess_eval_games_2020-01.sample.csv
+
+SCHEMA >
+    `event` String,
+    `site` String,
+    `date` DateTime,
+    `round` String,
+    `white` String,
+    `black` String,
+    `result` String,
+    `utcdate` Date,
+    `utctime` String,
+    `whiteelo` Int32,
+    `blackelo` Int32,
+    `whiteratingdiff` Int16,
+    `blackratingdiff` Int16,
+    `whitetitle` Nullable(String),
+    `blacktitle` Nullable(String),
+    `eco` String,
+    `opening` String,
+    `timecontrol` String,
+    `termination` String,
+    `game` String
