@@ -1,3 +1,6 @@
+# tinybird token
+.tinyb
+
 *.csv
 *.pgn
 *.pgn.bz2
