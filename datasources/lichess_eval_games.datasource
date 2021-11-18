@@ -8,7 +8,7 @@ SCHEMA >
     `white` String,
     `black` String,
     `result` String,
-    `utcdate` Date,
+    `utcdate` String,
     `utctime` String,
     `whiteelo` Int32,
     `blackelo` Int32,
