@@ -1,8 +1,10 @@
 chess blunders
 ==============================
-https://javier.artiga.es/chess-blunders/
-
 analyzing the most common chess blunders
+
+writeup: [https://javier.artiga.es/chess-blunders/](https://javier.artiga.es/chess-blunders/)
+
+repo: [https://github.com/jartigag/chess-blunders](https://github.com/jartigag/chess-blunders)
 
 ## How to recreate the results
 
