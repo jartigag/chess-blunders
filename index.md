@@ -102,4 +102,4 @@ Derived from the [Cookiecutter Data Science project](https://github.com/jartigag
 
 Compiled on [this thread](https://mastodon.social/@jartigag/106212322035384858)
 
-![](https://files.mastodon.social/media_attachments/files/107/328/483/891/239/296/original/8843e708f5db9bce.png)
+[![](https://files.mastodon.social/media_attachments/files/107/328/483/891/239/296/original/8843e708f5db9bce.png)](https://mastodon.social/@jartigag/107328492983995678)
