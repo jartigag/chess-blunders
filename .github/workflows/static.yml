@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Convert .md to .html and deploy static content to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -28,7 +28,7 @@ jobs:
       - name: Convert Markdown to HTML
         uses: natescherer/markdown-to-html-with-github-style-action@v1.1.0
         with:
-          path: ../README.md
+          path: '*'
           outputpath: .
   # Single deploy job since we're just deploying
   deploy:
