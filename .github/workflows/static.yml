@@ -35,7 +35,7 @@ jobs:
         uses: natescherer/markdown-to-html-with-github-style-action@v1.1.0
         with:
           path: index.md
-          outputpath: .
+          outputpath:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
