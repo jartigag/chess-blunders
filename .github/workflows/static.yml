@@ -27,6 +27,9 @@ jobs:
     steps:
       - name: Convert Markdown to HTML
         uses: natescherer/markdown-to-html-with-github-style-action@v1.1.0
+        with:
+          path: ./README.md
+          outputpath: './index.html'
   # Single deploy job since we're just deploying
   deploy:
     environment:
