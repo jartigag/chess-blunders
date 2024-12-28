@@ -1,10 +1,6 @@
-chess blunders
-==============================
-analyzing the most common chess blunders
+# Chess Blunders
 
-writeup: [https://javier.artiga.es/chess-blunders/](https://javier.artiga.es/chess-blunders/)
-
-repo: [https://github.com/jartigag/chess-blunders](https://github.com/jartigag/chess-blunders)
+Analyzing the most common chess blunders.
 
 ## How to recreate the results
 
@@ -20,10 +16,8 @@ make data
 
 The `make data` step takes a long time, so I'd recommend to run it on a server or maybe run it in two steps (`make data_interim` and then `make data_processed`).
 
-
 <details>
 <summary><b>Unfold this</b> to see screenshots and screencasts about the process</summary>
-
 <h2 id="-download-and-filter-only-evaluated-games">- Download and filter only evaluated games</h2>
 <p><a href="https://asciinema.org/a/421249"><img src="https://asciinema.org/a/421249.svg" alt="asciicast"></a></p>
 <h4 id="all-data-only-the-first-4m-evaluated-games-for-each-month-in-2020-and-2021-has-been-processed-but-that-s-enough-">All data (only the first 4M evaluated games for each month in 2020 and 2021 has been    processed, but that's enough):</h4>
@@ -43,7 +37,6 @@ jupyter-notebook
 <pre><code><span class="hljs-keyword">cd</span> notebooks
 <span class="hljs-keyword">python</span> <span class="hljs-number">1.0</span>-jartigag-explore_interim_data/<span class="hljs-number">1.0</span>-jartigag-explore_interim_data.<span class="hljs-keyword">py</span>
 </code></pre><p>but in that case matplotlib commands must be adapted in order to save the figures.</p>
-
 </details>
 
 ## Visualizations
@@ -63,8 +56,9 @@ Here there are the blunders more often played during 2020 (in the first 15 turns
 
 ![](reports/figures/blunders_evolution_2020.png)
 
-Project Organization
-------------
+## Project Organization
+
+Repository: [https://github.com/jartigag/chess-blunders](https://github.com/jartigag/chess-blunders)
 
 Derived from the [Cookiecutter Data Science project](https://github.com/jartigag/cookiecutter-data-science)
 
