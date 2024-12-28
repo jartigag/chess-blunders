@@ -22,6 +22,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  html:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Convert Markdown to HTML
+        uses: natescherer/markdown-to-html-with-github-style-action@v1.0.0
+        with:
+          path: README.md
+          outputpath: '.'
   # Single deploy job since we're just deploying
   deploy:
     environment:
