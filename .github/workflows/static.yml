@@ -32,12 +32,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Convert Markdown to HTML
-        uses: ZacJW/markdown-html-action@1.1.0
+        uses: natescherer/markdown-to-html-with-github-style-action@v1.1.0
         with:
-          input_files: '[["README.md"]]'
-          output_files: '["index.html"]'
-          builtin_stylesheet: 'style.css'
-          extensions: '["markdown.extensions.extra"]'
+          path: index.md
+          outputpath:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
