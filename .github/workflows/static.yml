@@ -36,6 +36,7 @@ jobs:
         with:
           input_files: '[["README.md"]]'
           output_files: '["index.html"]'
+          builtin_stylesheet: 'style.css'
           extensions: '["markdown.extensions.extra"]'
       - name: Setup Pages
         uses: actions/configure-pages@v5
