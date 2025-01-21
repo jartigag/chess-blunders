@@ -34,7 +34,7 @@ jobs:
       - name: Convert Markdown to HTML
         uses: natescherer/markdown-to-html-with-github-style-action@v1.1.0
         with:
-          path: index.md
+          path: README.md
           outputpath:
       - name: Setup Pages
         uses: actions/configure-pages@v5
